@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leetcode Solver</title>
+    <script>
+        const apiUrl = "https://api.openai.com/v1/chat/completions";
+        const apiKey="add your openai api key";
+        // Use a secure way to handle API keys
+        async function postData(event) {
+            event.preventDefault(); // Prevent form submission
+            const message = document.getElementById('message').value;
+            console.log(message);
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`,
+                    },
+                    body: JSON.stringify({
+                        "model": "gpt-3.5-turbo",
+                        "messages": [{
+                            "role": "user",
+                            "content": `Write a python code for the given question: ${message}`
+                        }]
+                    })
+                });
+                const data = await response.json();
+                console.log(data);
+                console.log("done");
+                const responseText = data.choices[0].message.content.trim();
+                const card = document.createElement('pre');
+                card.innerHTML = responseText;
+                document.getElementById('chat-area').appendChild(card);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+    <style>
+        .dark {
+            background-color: #141212;
+            color: white;
+        }
+        .card{
+            background-color: #8a8a8a;
+            color: #fff;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input {
+            margin: 0 auto;
+            margin-top: 30px;
+            height: 200px;
+            width: 80%;
+            display: block;
+        }
+    </style>
+</head>
+<body class="dark">
+    <h1>Get any LEETCODE solution With ChatGPT in Python</h1>
+    <form>
+        <label for="message">Enter your code statement</label>
+        <textarea class="input" id="message" cols="30" rows="10"></textarea>
+        <button type="submit" onclick="postData(event)">Get Answer</button>
+        <div id="chat-area"></div>
+    </form>
+</body>
+</html>
